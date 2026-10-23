@@ -1,19 +1,19 @@
-# 🎬 iMovies — Full-Stack Movie Ticket Booking Platform
+# iMovies — Full-Stack Movie Ticket Booking Platform
 
 **iMovies** is a modern, production-ready movie ticket booking platform built with **React + Vite**, **Node.js + Express**, **MongoDB**, **Socket.io**, and dark-cinema glassmorphic styling (Jet Black, Royal Amethyst, and Electric Cyan).
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-### 🎟️ User Experience
+### User Experience
 - **Live TMDB Market Feed**: Real-time trending movies, top 10 rankings, upcoming releases, and now-showing titles.
 - **Interactive Multi-Tier Seat Map**: Visual seating with Balcony, Middle, and Lower tiers.
 - **Real-Time Seat Locking**: Powered by **Socket.io** with live conflict prevention and automated 10-minute lock expiry cleanup.
 - **Online Checkout with Razorpay**: Test-mode payment gateway supporting UPI, NetBanking, Credit/Debit Cards, and Wallets with HMAC-SHA256 signature verification.
 - **Email Verification & OTP**: Integrated with **Brevo (Sendinblue)** for 6-digit OTP authentication, email confirmation links, password reset, and digital ticket delivery.
 
-### 🛡️ Admin Command Center
+### Admin Command Center
 - **Telemetry & Analytics**: Real-time reservation stats, revenue charts, and platform occupancy.
 - **Transactions & Refund Management**: Issue direct refunds via Razorpay API and automatically release booked seats.
 - **Full Catalog Management**: View, search, and delete Movies, Theatres, and Shows with instant confirmation modals.
@@ -23,7 +23,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Client**: React 18, Vite, Bootstrap 5, FontAwesome, Day.js, React-Toastify, Axios, Socket.io-client.
 - **Server**: Node.js, Express, MongoDB (Mongoose), Socket.io, Node-Cron, JWT, bcryptjs.
@@ -34,7 +34,7 @@
 
 ---
 
-## 🚀 Quick Start Guide
+## Quick Start Guide
 
 ### 1. Prerequisites
 - **Node.js** (v18+)
@@ -60,11 +60,9 @@ npm run dev
 
 ---
 
-## 🔐 Admin Credentials (Default)
-- **Admin Email**: `admin@imovies.com`
-- **Password**: `admin123`
+## Admin Credentials (Default)
+- **Admin Email**: `sample.ex.com`
+- **Password**: `sample`
 
 ---
 
-## 📄 License
-ISC License. Built for modern cinema experiences.
