@@ -222,12 +222,27 @@ io.on('connection', (socket) => {
 ═══════════════════════════════════════════════════════════════════ */
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
+
+if (!MONGO_URI) {
+  console.error('\n⚠️ [MongoDB Config Warning] MONGO_URI environment variable is not defined!');
+  console.error('Please set MONGO_URI in your cloud deployment environment variables (e.g. Render/Vercel).');
+  console.error('Example: MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/imovies?retryWrites=true&w=majority\n');
+}
 
 mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    console.log('[MongoDB] Connected successfully to', MONGO_URI);
+  .connect(MONGO_URI || 'mongodb://localhost:27017/imovies')
+  .then(async () => {
+    const maskedUri = (MONGO_URI || 'mongodb://localhost:27017/imovies').replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
+    console.log('[MongoDB] Connected successfully to', maskedUri);
+
+    // Auto-seed check: if deployed with an empty database, seed initial theatres, admin, and shows
+    try {
+      const { autoSeedDatabase } = require('./utils/autoSeeder');
+      await autoSeedDatabase();
+    } catch (seedErr) {
+      console.warn('[AutoSeed] Notice:', seedErr.message);
+    }
 
     // Start background cron services after DB is ready
     startCleanupService(io);
