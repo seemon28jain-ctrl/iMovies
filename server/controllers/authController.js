@@ -320,8 +320,41 @@ const loginUser = async (req, res) => {
         .json({ success: false, message: 'Email and password are required.' });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const cleanIdentifier = email.trim().toLowerCase();
+    const user = await User.findOne({
+      $or: [
+        { email: cleanIdentifier },
+        { username: new RegExp(`^${cleanIdentifier}$`, 'i') },
+      ],
+    });
+
     if (!user) {
+      // Check if it's an admin signing in via the user form
+      const admin = await Admin.findOne({
+        $or: [
+          { email: cleanIdentifier },
+          { username: new RegExp(`^${cleanIdentifier}$`, 'i') },
+        ],
+      });
+      if (admin) {
+        const isMatch = await bcrypt.compare(password, admin.password);
+        if (isMatch) {
+          const token = signToken({
+            id: admin._id,
+            email: admin.email,
+            username: admin.username,
+            isAdmin: true,
+          });
+          return res.json({
+            success: true,
+            isAdmin: true,
+            message: 'Admin login successful.',
+            token,
+            admin: { id: admin._id, username: admin.username, email: admin.email },
+            user: { id: admin._id, username: admin.username, email: admin.email, isAdmin: true },
+          });
+        }
+      }
       return res
         .status(401)
         .json({ success: false, message: 'Invalid credentials.' });
@@ -549,7 +582,13 @@ const loginAdmin = async (req, res) => {
         .json({ success: false, message: 'Email and password are required.' });
     }
 
-    const admin = await Admin.findOne({ email: email.toLowerCase() });
+    const cleanIdentifier = email.trim().toLowerCase();
+    const admin = await Admin.findOne({
+      $or: [
+        { email: cleanIdentifier },
+        { username: new RegExp(`^${cleanIdentifier}$`, 'i') },
+      ],
+    });
     if (!admin) {
       return res
         .status(401)
@@ -572,9 +611,11 @@ const loginAdmin = async (req, res) => {
 
     res.json({
       success: true,
+      isAdmin: true,
       message: 'Admin login successful.',
       token,
       admin: { id: admin._id, username: admin.username, email: admin.email },
+      user: { id: admin._id, username: admin.username, email: admin.email, isAdmin: true },
     });
   } catch (err) {
     console.error('[loginAdmin]', err.message);

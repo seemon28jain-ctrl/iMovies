@@ -24,8 +24,12 @@ const LoginPage = () => {
   /* ---- Validation ---- */
   const validate = () => {
     const errs = {};
-    if (!form.email.trim()) errs.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = 'Enter a valid email';
+    const identifier = form.email.trim();
+    if (!identifier) {
+      errs.email = 'Email or username is required';
+    } else if (!/\S+@\S+\.\S+/.test(identifier) && identifier.length < 3) {
+      errs.email = 'Enter a valid email address or username';
+    }
     if (!form.password) errs.password = 'Password is required';
     else if (form.password.length < 6) errs.password = 'Password must be at least 6 characters';
     setErrors(errs);
@@ -47,23 +51,31 @@ const LoginPage = () => {
         password: form.password
       });
 
-      if (activeTab === 'user') {
-        localStorage.setItem('imovies-token', data.token || data.authToken || data.data?.token);
-        localStorage.setItem('imovies-username', data.user?.username || data.username || 'User');
-        localStorage.setItem('imovies-email', data.user?.email || form.email);
-      } else {
-        localStorage.setItem('imovies-admin-token', data.token || data.authToken || data.data?.token);
-        localStorage.setItem('imovies-username', data.admin?.username || data.username || 'Admin');
-        localStorage.setItem('imovies-email', form.email);
+      const token = data.token || data.authToken || data.data?.token;
+
+      // If user is admin (via admin tab or admin credentials)
+      if (data.isAdmin || data.admin || data.user?.isAdmin || activeTab === 'admin') {
+        localStorage.setItem('imovies-admin-token', token);
+        localStorage.setItem('imovies-token', token);
+        localStorage.setItem('imovies-username', data.admin?.username || data.user?.username || 'Admin');
+        localStorage.setItem('imovies-email', data.admin?.email || data.user?.email || form.email);
+        toast.success(`Welcome back, Admin!`);
+        navigate('/admin');
+        return;
       }
 
-      toast.success(`Welcome back! Logged in as ${activeTab}.`);
-      navigate(activeTab === 'admin' ? '/admin' : '/home');
+      // Regular user login
+      localStorage.setItem('imovies-token', token);
+      localStorage.setItem('imovies-username', data.user?.username || data.username || 'User');
+      localStorage.setItem('imovies-email', data.user?.email || form.email);
+
+      toast.success(`Welcome back! Logged in successfully.`);
+      navigate('/home');
     } catch (err) {
       if (err.response?.status === 403 || err.response?.data?.isVerified === false) {
         setUnverifiedEmail(form.email.trim().toLowerCase());
       }
-      toast.error(err.response?.data?.message || 'Login failed. Please try again.');
+      toast.error(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }

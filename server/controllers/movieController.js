@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Movie = require('../models/movieModel');
 const Show = require('../models/showModel');
 const tmdbService = require('../services/tmdbService');
+const { ensureShowsForMovie } = require('../utils/showHelper');
 
 /**
  * GET /api/movies (or /api/movie)
@@ -328,6 +329,9 @@ const addMovie = async (req, res) => {
       if (avgRating) movie.avgRating = avgRating;
       movie.isActive = true;
       await movie.save();
+      // Ensure shows are scheduled across theatres for this movie
+      ensureShowsForMovie(movie).catch(err => console.warn('[addMovie] ensureShows error:', err.message));
+
       return res.status(200).json({
         success: true,
         message: `Movie "${movie.movieName}" saved to catalog.`,
@@ -352,6 +356,8 @@ const addMovie = async (req, res) => {
     });
 
     await movie.save();
+    // Auto-schedule shows across theatres for the newly added movie
+    ensureShowsForMovie(movie).catch(err => console.warn('[addMovie] ensureShows error:', err.message));
     res.status(201).json({
       success: true,
       message: `Movie "${movie.movieName}" added successfully.`,

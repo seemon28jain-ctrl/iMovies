@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Movie = require('../models/movieModel');
 const Show = require('../models/showModel');
 const Theatre = require('../models/theatreModel');
+const { ensureShowsForMovie } = require('../utils/showHelper');
 
 /**
  * GET /api/shows
@@ -91,66 +92,9 @@ const getShowsByMovie = async (req, res) => {
       showTime: 1,
     });
 
-    // Auto-schedule demo screenings ONLY for seed TMDB movies when absolutely zero shows exist
-    if (shows.length === 0 && movie && movie.tmdbId) {
-      const theatres = await Theatre.find({ isActive: true });
-      if (theatres.length > 0) {
-        const times = ['10:00 AM', '01:30 PM', '04:45 PM', '07:30 PM', '10:15 PM'];
-
-        for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
-          const dateStr = new Date(Date.now() + (dayOffset * 24 + 5.5) * 3600000).toISOString().split('T')[0];
-
-          for (const theatre of theatres) {
-            for (const time of times) {
-              const existing = await Show.findOne({
-                movieId: { $in: searchIds },
-                theatreId: theatre.theatreId,
-                showDate: dateStr,
-                showTime: time
-              });
-
-              if (!existing) {
-                const tickets = {};
-                const buildSeats = (seatMap, type, price) => {
-                  Object.keys(seatMap || {}).forEach((seatId) => {
-                    tickets[seatId] = {
-                      seatId,
-                      type,
-                      price,
-                      status: 'available',
-                      lockExpiry: null,
-                      bookedBy: null,
-                    };
-                  });
-                };
-                buildSeats(theatre.balconySeats, 'balcony', theatre.balconySeatPrice);
-                buildSeats(theatre.middleSeats, 'middle', theatre.middleSeatPrice);
-                buildSeats(theatre.lowerSeats, 'lower', theatre.lowerSeatPrice);
-
-                const newShow = new Show({
-                  adminEmail: 'admin@imovies.com',
-                  showId: uuidv4(),
-                  movieId: movie ? movie._id.toString() : movieId,
-                  theatreName: theatre.theatreName,
-                  theatreId: theatre.theatreId,
-                  showDate: dateStr,
-                  showTime: time,
-                  tickets,
-                });
-                await newShow.save();
-              }
-            }
-          }
-        }
-
-        shows = await Show.find({
-          movieId: { $in: searchIds },
-          showDate: { $gte: today }
-        }).sort({
-          showDate: 1,
-          showTime: 1,
-        });
-      }
+    // Auto-schedule screenings across active theatres for upcoming 7 days if none exist yet
+    if (shows.length === 0 && movie) {
+      shows = await ensureShowsForMovie(movie);
     }
 
     res.json({ success: true, count: shows.length, shows });

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Theatre = require('../models/theatreModel');
 const Show = require('../models/showModel');
+const { scheduleShowsForNewTheatre } = require('../utils/showHelper');
 
 /**
  * GET /api/theatres
@@ -101,6 +102,8 @@ const addTheatre = async (req, res) => {
     });
 
     await theatre.save();
+    // Auto-schedule shows in the newly created theatre across active movies
+    scheduleShowsForNewTheatre(theatre).catch(err => console.warn('[addTheatre] scheduleShows error:', err.message));
     res.status(201).json({ success: true, message: 'Theatre added successfully.', theatre });
   } catch (err) {
     console.error('[addTheatre]', err.message);
