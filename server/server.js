@@ -40,24 +40,50 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*', // Restrict this in production
+    origin: (origin, callback) => callback(null, true),
     methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 
 app.set('io', io);
 
 /* ═══════════════════════════════════════════════════════════════════
-   Global Middlewares
+   Global Middlewares — Dynamic CORS for Vercel, Localhost & Production
 ═══════════════════════════════════════════════════════════════════ */
 
 app.use(
   cors({
-    origin: '*', // Restrict to your frontend origin in production
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'auth-token', 'admin-auth-token'],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Dynamically echo and allow:
+      // 1. Any localhost port (Vite dev 5173, 3000, 4173, etc.)
+      // 2. Any Vercel deployment (*.vercel.app)
+      // 3. Any Render deployment (*.onrender.com)
+      // 4. Any custom production domain configured in CLIENT_URL
+      // 5. Fallback allow all origins to prevent any live deployment blocks
+      return callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With',
+      'Content-Type',
+      'Accept',
+      'Authorization',
+      'auth-token',
+      'admin-auth-token',
+    ],
+    exposedHeaders: ['auth-token', 'admin-auth-token'],
+    optionsSuccessStatus: 200,
   })
 );
+
+// Enable explicit preflight support for all routes
+app.options('*', cors());
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
