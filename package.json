@@ -4,11 +4,30 @@
   "description": "iMovies - Full-Stack Movie Ticket Booking Platform",
   "main": "server/server.js",
   "scripts": {
+    "postinstall": "npm install --prefix server",
     "build": "npm install --prefix client && npm run build --prefix client && npm install --prefix server",
     "start": "node server/server.js",
     "client": "npm run dev --prefix client",
     "server": "npm run dev --prefix server",
     "seed": "npm run seed --prefix server"
+  },
+  "dependencies": {
+    "@getbrevo/brevo": "^6.2.0",
+    "axios": "^1.20.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.3.1",
+    "node-cron": "^3.0.2",
+    "nodemailer": "^6.9.3",
+    "razorpay": "^2.9.8",
+    "socket.io": "^4.7.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   },
   "keywords": [
     "movie-booking",

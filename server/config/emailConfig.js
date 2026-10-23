@@ -2,7 +2,9 @@
  * emailConfig.js - Centralized Brevo (Sendinblue) Email Configuration & Validation
  * Safely loads and validates required environment variables for transactional emails.
  */
-require('dotenv').config();
+try {
+  require('dotenv').config();
+} catch (_) {}
 
 const validateEmailConfig = () => {
   const apiKey = process.env.BREVO_API_KEY;

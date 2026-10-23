@@ -14,7 +14,9 @@
  */
 
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+try {
+  require('dotenv').config({ path: path.join(__dirname, '.env') });
+} catch (_) {}
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
