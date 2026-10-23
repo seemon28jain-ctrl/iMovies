@@ -60,8 +60,11 @@ export default function App() {
             <Route path="/login"    element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/verifyemail"  element={<Navigate to="/verify-email" replace />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/forgotpassword"  element={<Navigate to="/forgot-password" replace />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/resetpassword"  element={<Navigate to="/reset-password" replace />} />
 
             {/* User Protected Routes */}
             <Route path="/home"
