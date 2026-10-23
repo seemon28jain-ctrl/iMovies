@@ -1,0 +1,22 @@
+{
+  "name": "imovies",
+  "version": "1.0.0",
+  "description": "iMovies - Full-Stack Movie Ticket Booking Platform",
+  "main": "server/server.js",
+  "scripts": {
+    "build": "npm install --prefix client && npm run build --prefix client && npm install --prefix server",
+    "start": "node server/server.js",
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server"
+  },
+  "keywords": [
+    "movie-booking",
+    "react",
+    "nodejs",
+    "express",
+    "razorpay",
+    "brevo"
+  ],
+  "author": "seemon28jain-ctrl",
+  "license": "ISC"
+}

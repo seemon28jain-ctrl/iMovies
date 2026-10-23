@@ -93,6 +93,21 @@ app.use('/api/review', reviewRoutes);
 app.use('/api/reviews', reviewRoutes);
 
 /* ═══════════════════════════════════════════════════════════════════
+   Static frontend serving (Production / Render single-service support)
+═══════════════════════════════════════════════════════════════════ */
+
+const fs = require('fs');
+const clientDistPath = path.join(__dirname, '../client/dist');
+
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api')) return next();
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    404 handler (must come after all routes)
 ═══════════════════════════════════════════════════════════════════ */
 
