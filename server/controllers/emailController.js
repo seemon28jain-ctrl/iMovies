@@ -4,6 +4,7 @@
  * with structured logging.
  */
 const emailService = require('../services/emailService');
+const { getClientUrl } = require('../utils/clientUrl');
 
 /**
  * POST /api/email/test
@@ -59,7 +60,8 @@ const triggerVerificationEmail = async (req, res) => {
       });
     }
 
-    const result = await emailService.sendVerificationEmail(email, token, username);
+    const clientBaseUrl = getClientUrl(req);
+    const result = await emailService.sendVerificationEmail(email, token, username, '', clientBaseUrl);
     return res.json({
       success: result.success,
       message: result.success ? 'Verification email dispatched.' : 'Failed to dispatch verification email.',
@@ -85,7 +87,8 @@ const triggerPasswordResetEmail = async (req, res) => {
       });
     }
 
-    const result = await emailService.sendPasswordResetEmail(email, token, username);
+    const clientBaseUrl = getClientUrl(req);
+    const result = await emailService.sendPasswordResetEmail(email, token, username, clientBaseUrl);
     return res.json({
       success: result.success,
       message: result.success ? 'Password reset email dispatched.' : 'Failed to dispatch password reset email.',

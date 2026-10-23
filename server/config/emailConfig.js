@@ -33,7 +33,9 @@ const validateEmailConfig = () => {
     apiKey,
     senderEmail,
     senderName,
-    clientUrl,
+    get clientUrl() {
+      return (process.env.CLIENT_URL || clientUrl || 'http://localhost:3000').replace(/\/$/, '');
+    },
     isValid: errors.length === 0,
     errors,
   };

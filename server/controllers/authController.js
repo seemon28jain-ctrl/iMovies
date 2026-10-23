@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const User = require('../models/userModel');
 const Admin = require('../models/adminModel');
 const emailService = require('../services/emailService');
+const { getClientUrl } = require('../utils/clientUrl');
 
 /* ═══════════════════════════════════════════════════════════════════
    Helpers
@@ -75,7 +76,8 @@ const registerUser = async (req, res) => {
 
     // Dispatch activation email containing BOTH OTP & Clickable Link via Brevo
     try {
-      await emailService.sendVerificationEmail(user.email, verificationToken, user.username, verificationOtp);
+      const clientBaseUrl = getClientUrl(req);
+      await emailService.sendVerificationEmail(user.email, verificationToken, user.username, verificationOtp, clientBaseUrl);
     } catch (mailErr) {
       console.warn('[registerUser] Verification email notice:', mailErr.message);
     }
@@ -294,7 +296,8 @@ const resendVerificationEmail = async (req, res) => {
     user.verificationOtpExpires = verificationExpires;
     await user.save();
 
-    await emailService.sendVerificationEmail(user.email, verificationToken, user.username, verificationOtp);
+    const clientBaseUrl = getClientUrl(req);
+    await emailService.sendVerificationEmail(user.email, verificationToken, user.username, verificationOtp, clientBaseUrl);
 
     res.json({
       success: true,
@@ -450,7 +453,8 @@ const forgotPassword = async (req, res) => {
     console.log(`[auth] Password reset requested for ${user.email}. Dispatching reset link via Brevo.`);
 
     try {
-      await emailService.sendPasswordResetEmail(user.email, resetToken, user.username);
+      const clientBaseUrl = getClientUrl(req);
+      await emailService.sendPasswordResetEmail(user.email, resetToken, user.username, clientBaseUrl);
     } catch (mailErr) {
       console.warn('[forgotPassword] Email dispatch warning:', mailErr.message);
     }

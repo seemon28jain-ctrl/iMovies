@@ -259,10 +259,11 @@ const sendTemplateEmail = async ({ to, templateId, params }) => {
  * @param {string} [username] - User's name.
  * @param {string} [verificationOtp] - 6-digit one-time password.
  */
-const sendVerificationEmail = async (email, verificationToken, username = 'Movie Lover', verificationOtp = '') => {
+const sendVerificationEmail = async (email, verificationToken, username = 'Movie Lover', verificationOtp = '', clientBaseUrl = '') => {
+  const baseUrl = (clientBaseUrl || process.env.CLIENT_URL || emailConfig.clientUrl || 'http://localhost:3000').replace(/\/$/, '');
   const verificationLink = verificationToken.startsWith('http')
     ? verificationToken
-    : `${emailConfig.clientUrl}/verify-email?token=${verificationToken}`;
+    : `${baseUrl}/verify-email?token=${verificationToken}`;
 
   const subject = `🎬 Verify Your iMovies Account ${verificationOtp ? `— OTP: ${verificationOtp}` : ''}`;
 
@@ -331,10 +332,11 @@ const sendVerificationEmail = async (email, verificationToken, username = 'Movie
  * @param {string} resetToken - Crypto reset token or full reset link.
  * @param {string} [username] - User's name.
  */
-const sendPasswordResetEmail = async (email, resetToken, username = 'User') => {
+const sendPasswordResetEmail = async (email, resetToken, username = 'User', clientBaseUrl = '') => {
+  const baseUrl = (clientBaseUrl || process.env.CLIENT_URL || emailConfig.clientUrl || 'http://localhost:3000').replace(/\/$/, '');
   const resetLink = resetToken.startsWith('http')
     ? resetToken
-    : `${emailConfig.clientUrl}/reset-password?token=${resetToken}`;
+    : `${baseUrl}/reset-password?token=${resetToken}`;
 
   const subject = '🔒 Reset Your iMovies Password';
 
