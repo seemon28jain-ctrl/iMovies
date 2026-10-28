@@ -1,4 +1,4 @@
-# iMovies — Full-Stack Movie Ticket Booking Platform
+# IMovies - Movie ticket booking made simple.
 
 **iMovies** is a modern, production-ready movie ticket booking platform built with **React + Vite**, **Node.js + Express**, **MongoDB**, **Socket.io**, and dark-cinema glassmorphic styling (Jet Black, Royal Amethyst, and Electric Cyan).
 
