@@ -4,16 +4,16 @@
 
 ---
 
-## 📁 Project Documentation
+## Project Documentation
 
 Detailed system architecture, engineering roles, and technical diagrams are maintained inside the [`docs/`](docs/) directory:
 
 | Document | Description |
 | :--- | :--- |
-| 🏗️ **[System Architecture](docs/architecture.md)** | MVC pattern implementation, backend models, controller logic, API lifecycle, and security. |
-| 👥 **[Roles & Responsibilities](docs/roles.md)** | Team contribution matrix, engineering roles, and core module ownership. |
-| 📊 **[ER Diagram](docs/diagrams/er-diagram.md)** | Entity-Relationship schema diagram modeling database entities, keys, and cardinalities. |
-| 🧭 **[User Flow Diagram](docs/diagrams/user-flow.md)** | End-to-end journey diagram from landing page to seat locking, payment, and ticket delivery. |
+|  **[System Architecture](docs/architecture.md)** | MVC pattern implementation, backend models, controller logic, API lifecycle, and security. |
+|  **[Roles & Responsibilities](docs/roles.md)** | Team contribution matrix, engineering roles, and core module ownership. |
+|  **[ER Diagram](docs/diagrams/er-diagram.md)** | Entity-Relationship schema diagram modeling database entities, keys, and cardinalities. |
+|  **[User Flow Diagram](docs/diagrams/user-flow.md)** | End-to-end journey diagram from landing page to seat locking, payment, and ticket delivery. |
 
 ---
 
